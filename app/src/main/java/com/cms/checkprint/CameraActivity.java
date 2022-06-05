@@ -208,7 +208,7 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
                                     bundle.putString("code", empCode);
                                     bundle.putString("name", empName);
                                     bundle.putString("pic", pic);
-                                    bundle.putBoolean("status", status);
+                                    bundle.putString("message", message);
                                     Intent intent = new Intent(CameraActivity.this,ViewActivity.class);
                                     intent.putExtras(bundle);
                                     startActivity(intent);
