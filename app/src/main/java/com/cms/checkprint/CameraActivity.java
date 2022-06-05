@@ -212,6 +212,7 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
                                     Intent intent = new Intent(CameraActivity.this,ViewActivity.class);
                                     intent.putExtras(bundle);
                                     startActivity(intent);
+                                    finish();
                                 }else{
                                     isProcessing= false;
                                     showMessage("Face not identify");
