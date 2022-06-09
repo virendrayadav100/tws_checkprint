@@ -28,13 +28,32 @@ public class DataApiService {
         });
     }*/
 
-
     public static void identifyFace(String base64Image, final DataApiCallback dataApiCallback) {
         DataApis dataApis = RetrofitClient.getRetrofitClient(DataApis.class);
         JsonObject dataRequest = new JsonObject();
         dataRequest.addProperty("ImageBase64",base64Image);
 
         Call<JsonObject> call = dataApis.identifyFace(dataRequest);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                dataApiCallback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                dataApiCallback.onFailure(t);
+            }
+        });
+    }
+
+    public static void printRequest(long associateId,long chequeId, final DataApiCallback dataApiCallback) {
+        DataApis dataApis = RetrofitClient.getRetrofitClient(DataApis.class);
+        JsonObject dataRequest = new JsonObject();
+        dataRequest.addProperty("AssociateId",associateId);
+        dataRequest.addProperty("CheckId",chequeId);
+
+        Call<JsonObject> call = dataApis.printRequest(dataRequest);
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

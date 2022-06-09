@@ -1,9 +1,5 @@
 package com.cms.checkprint;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +7,10 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.cms.checkprint.camera.CameraSource;
 import com.cms.checkprint.databinding.ActivityCameraBinding;
@@ -20,33 +20,30 @@ import com.cms.checkprint.network.NetworkConfiguration;
 import com.cms.checkprint.network.retrofit.apis.data.DataApiCallback;
 import com.cms.checkprint.network.retrofit.apis.data.DataApiService;
 import com.cms.checkprint.util.MyPermissionUtil;
-import com.cms.checkprint.util.PermissionUtil;
 import com.google.gson.JsonObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class CameraActivity extends AppCompatActivity implements FaceContourDetectorProcessor.FaceContourDetectorListener {
-
-    private CameraSource mCameraSource=null;
-    private Bitmap mCapturedBitmap = null;
-    private FaceContourDetectorProcessor mFaceContourDetectorProcessor;
 
     private static String KEY_IMAGE_PATH = "image_path";
     private static String KEY_TEXT_BACK = "text_back";
     private static String KEY_TEXT_DESCRIPTION = "text_description";
     private static int PERMISSION_CAMERA_REQUEST_CODE = 2;
+    ActivityCameraBinding binding;
+    private CameraSource mCameraSource = null;
+    private Bitmap mCapturedBitmap = null;
+    private FaceContourDetectorProcessor mFaceContourDetectorProcessor;
     private boolean isProcessing = false;
 
-    ActivityCameraBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_camera);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_camera);
 
-        if (new MyPermissionUtil().isHavePermission (this, PERMISSION_CAMERA_REQUEST_CODE, Manifest.permission.CAMERA )) {
+        if (new MyPermissionUtil().isHavePermission(this, PERMISSION_CAMERA_REQUEST_CODE, Manifest.permission.CAMERA)) {
             createCameraSource();
         }
         startCameraSource();
@@ -54,20 +51,20 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
 
     @Override
     public void onCapturedFace(@NonNull Bitmap originalCameraImage) {
-       try {
-           if(originalCameraImage!=null ) {
-               mCapturedBitmap = originalCameraImage;
-               //createSelfiePictureAndReturn();
-               if(!isProcessing) {
-                   isProcessing = true;
-                   if (NetworkConfiguration.isNetworkAvailable(CameraActivity.this))
-                       identifyFace(originalCameraImage);
-                   else showMessage("No internet connection available.");
-               }
-           }
-       }catch (Exception e){
-           Log.e("error",e.getMessage()+" kk1");
-       }
+        try {
+            if (originalCameraImage != null) {
+                mCapturedBitmap = originalCameraImage;
+                //createSelfiePictureAndReturn();
+                if (!isProcessing) {
+                    isProcessing = true;
+                    if (NetworkConfiguration.isNetworkAvailable(CameraActivity.this))
+                        identifyFace(originalCameraImage);
+                    else showMessage("No internet connection available.");
+                }
+            }
+        } catch (Exception e) {
+            Log.e("error", e.getMessage() + " kk1");
+        }
     }
 
     @Override
@@ -75,7 +72,7 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
         mCapturedBitmap = null;
     }
 
-    private void showMessage(String message){
+    private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
@@ -98,8 +95,8 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
             intent.putExtra(KEY_IMAGE_PATH, file.getAbsolutePath());
             setResult(Activity.RESULT_OK, intent);
             finish();
-        }catch (Exception e){
-            Log.e("error",e.getMessage()+" kk");
+        } catch (Exception e) {
+            Log.e("error", e.getMessage() + " kk");
         }
     }
 
@@ -121,8 +118,8 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
      */
     private void startCameraSource() {
         try {
-            binding.cameraPreview.start(mCameraSource,binding.faceOverlay);
-        }catch (Exception e){
+            binding.cameraPreview.start(mCameraSource, binding.faceOverlay);
+        } catch (Exception e) {
 
         }
        /* mCameraSource?.let {
@@ -152,18 +149,18 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       try {
-           mCameraSource.release();
-       }catch (Exception e){
+        try {
+            mCameraSource.release();
+        } catch (Exception e) {
 
-       }
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==PERMISSION_CAMERA_REQUEST_CODE){
-            if(new MyPermissionUtil().isPermissionGranted(requestCode,PERMISSION_CAMERA_REQUEST_CODE,grantResults))
+        if (requestCode == PERMISSION_CAMERA_REQUEST_CODE) {
+            if (new MyPermissionUtil().isPermissionGranted(requestCode, PERMISSION_CAMERA_REQUEST_CODE, grantResults))
                 createCameraSource();
             else
                 onBackPressed();
@@ -173,7 +170,7 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
     private void identifyFace(Bitmap bitmap) {
         String base64String = Utility.getBase64FromBytes(bitmap);
         if (base64String != null) {
-            DataApiService.identifyFace( base64String, new DataApiCallback() {
+            DataApiService.identifyFace(base64String, new DataApiCallback() {
                 @Override
                 public void onSuccess(JsonObject jsonObject) {
                     Log.e("identify", jsonObject + " kk");
@@ -183,71 +180,90 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
                             String message = "";
                             if (!jsonObject.get("Message").isJsonNull())
                                 message = jsonObject.get("Message").getAsString();
-                            if(!status){
-                                String pic = null;
-                                long empId =0;
-                                String empCode ="";
-                                String empName = "";
-                                JsonObject jsonDataObject = null;
-                                if (!jsonObject.get("ResponseModel").isJsonNull()) {
-                                    jsonDataObject = jsonObject.getAsJsonObject("ResponseModel");
-                                    if (jsonDataObject != null) {
-                                        empId = jsonDataObject.get("AssociateId").getAsLong();
-                                        empCode = jsonDataObject.get("AssociateCode").getAsString();
-                                        empName = jsonDataObject.get("AssociateName").getAsString();
+                            String pic = null;
 
-                                        if (!jsonDataObject.get("AssociateImage").isJsonNull()) {
-                                            pic = jsonDataObject.get("AssociateImage").getAsString();
-                                            if (pic.trim().length() > 0) {
-                                                pic = "https://tempworkstaffing.com/profilepicture/" + pic;
-                                            }
+                            JsonObject jsonDataObject = null;
+                            if (!jsonObject.get("ResponseModel").isJsonNull()) {
+                                jsonDataObject = jsonObject.getAsJsonObject("ResponseModel");
+                                if (jsonDataObject != null) {
+                                    long empId = 0;
+                                    String empCode = "";
+                                    String empName = "";
+                                    String clientName ="";
+                                    String chequeUrl = "";
+                                    String PayWeekEnding = "";
+                                    boolean chequePrinted=false;
+                                    long chequeId =0;
+                                    empId = jsonDataObject.get("AssociateId").getAsLong();
+                                    empCode = jsonDataObject.get("AssociateCode").getAsString();
+                                    empName = jsonDataObject.get("AssociateName").getAsString();
+                                    clientName =jsonDataObject.get("ClientName").getAsString();
+                                    if (!jsonDataObject.get("CheckURL").isJsonNull())
+                                        chequeUrl =jsonDataObject.get("CheckURL").getAsString();
+                                    if (!jsonDataObject.get("PayWeekEnding").isJsonNull())
+                                    PayWeekEnding =jsonDataObject.get("PayWeekEnding").getAsString();
+                                    chequePrinted =jsonDataObject.get("CheckPrinted").getAsBoolean();
+                                    chequeId = jsonDataObject.get("CheckId").getAsLong();
+
+                                    if (!jsonDataObject.get("AssociateImage").isJsonNull()) {
+                                        pic = jsonDataObject.get("AssociateImage").getAsString();
+                                        if (pic.trim().length() > 0) {
+                                            pic = "https://tempworkstaffing.com/profilepicture/" + pic;
                                         }
                                     }
+
                                     Bundle bundle = new Bundle();
                                     bundle.putLong("id", empId);
                                     bundle.putString("code", empCode);
                                     bundle.putString("name", empName);
                                     bundle.putString("pic", pic);
                                     bundle.putString("message", message);
-                                    Intent intent = new Intent(CameraActivity.this,ViewActivity.class);
+                                    bundle.putBoolean("status", status);
+                                    bundle.putString("clientName", clientName);
+                                    bundle.putString("chequeUrl", chequeUrl);
+                                    bundle.putString("PayWeekEnding", PayWeekEnding);
+                                    bundle.putBoolean("chequePrinted", chequePrinted);
+                                    bundle.putLong("chequeId", chequeId);
+                                    Intent intent = new Intent(CameraActivity.this, ViewActivity.class);
                                     intent.putExtras(bundle);
                                     startActivity(intent);
                                     finish();
                                 }else{
-                                    isProcessing= false;
-                                    showMessage("Face not identify");
+                                    isProcessing = false;
+                                    showMessage(message);
                                 }
-                            }else{
-                                isProcessing= false;
-                                showMessage("Face not identify");
+                            } else {
+                                isProcessing = false;
+                                showMessage(message);
                             }
+
                         } else {
-                            isProcessing= false;
+                            isProcessing = false;
                             showMessage("Some thing went wrong.");
-                           // refreshActivity();
+                            // refreshActivity();
                         }
                     } catch (Exception e) {
-                        isProcessing= false;
+                        isProcessing = false;
                         showMessage("Something went wrong");
-                       // refreshActivity();
+                        // refreshActivity();
                     }
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
-                    isProcessing= false;
+                    isProcessing = false;
                     showMessage("Some thing went wrong.");
-                   // refreshActivity();
+                    // refreshActivity();
                 }
             });
-        } else{
-            isProcessing= false;
-           // refreshActivity();
+        } else {
+            isProcessing = false;
+            // refreshActivity();
         }
     }
 
-    private void refreshActivity(){
-        startActivity(new Intent(this,CameraActivity.class));
+    private void refreshActivity() {
+        startActivity(new Intent(this, CameraActivity.class));
 
     }
 }

@@ -16,4 +16,7 @@ public interface DataApis {
     @POST("checkprint/IdentifyFace")
     Call<JsonObject> identifyFace(@Body JsonObject requestBodyData);
 
+    @POST("checkprint/PrintRequest")
+    Call<JsonObject> printRequest(@Body JsonObject requestBodyData);
+
 }

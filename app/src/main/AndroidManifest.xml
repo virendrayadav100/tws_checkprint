@@ -16,9 +16,13 @@
         android:theme="@style/Theme.CheckPrint"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".OtpVerificationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".ViewActivity"
             android:exported="false"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
@@ -27,7 +31,8 @@
             android:exported="false" />
         <activity
             android:name=".CameraActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
