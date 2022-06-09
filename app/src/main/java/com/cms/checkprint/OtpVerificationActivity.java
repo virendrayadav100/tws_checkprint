@@ -15,6 +15,7 @@ public class OtpVerificationActivity extends AppCompatActivity {
     ActivityOtpVerificationBinding binding;
     String otp;
     String ssn;
+    String pdfUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class OtpVerificationActivity extends AppCompatActivity {
             String MobileNo = bundle.getString("MobileNo");
             otp = bundle.getString("OTPText");
             ssn = bundle.getString("SSNLastFiveDigit");
+            pdfUrl = bundle.getString("pdf");
             String message = bundle.getString("message");
             boolean status = bundle.getBoolean("status");
         }

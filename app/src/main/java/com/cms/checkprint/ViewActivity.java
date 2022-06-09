@@ -23,7 +23,7 @@ public class ViewActivity extends AppCompatActivity {
     ActivityViewBinding binding;
     private long associateId, chequeId;
     private String removePdfTopIcon = "javascript:(function() {" + "document.querySelector('[role=\"toolbar\"]').remove();})()";
-
+    private  String chequeUrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +39,7 @@ public class ViewActivity extends AppCompatActivity {
             String message = bundle.getString("message");
             boolean status = bundle.getBoolean("status");
             String clientName = bundle.getString("clientName");
-            String chequeUrl = bundle.getString("chequeUrl");
+             chequeUrl = bundle.getString("chequeUrl");
             String PayWeekEnding = bundle.getString("PayWeekEnding");
             boolean chequePrinted = bundle.getBoolean("chequePrinted");
             chequeId = bundle.getLong("chequeId");
@@ -130,6 +130,7 @@ public class ViewActivity extends AppCompatActivity {
                             bundle.putString("OTPText", OTPText);
                             bundle.putString("SSNLastFiveDigit", SSNLastFiveDigit);
                             bundle.putString("message", message);
+                            bundle.putString("pdf", chequeUrl);
                             bundle.putBoolean("status", true);
                             Intent intent = new Intent(getApplicationContext(), OtpVerificationActivity.class);
                             intent.putExtras(bundle);
@@ -157,8 +158,6 @@ public class ViewActivity extends AppCompatActivity {
     private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
-
 
 
     private void showPdfFile(final String imageString) {
