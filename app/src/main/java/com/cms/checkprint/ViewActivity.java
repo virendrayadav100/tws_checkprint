@@ -23,7 +23,8 @@ public class ViewActivity extends AppCompatActivity {
     ActivityViewBinding binding;
     private long associateId, chequeId;
     private String removePdfTopIcon = "javascript:(function() {" + "document.querySelector('[role=\"toolbar\"]').remove();})()";
-    private  String chequeUrl;
+    private String chequeUrl;
+    private boolean isfinish= true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +44,6 @@ public class ViewActivity extends AppCompatActivity {
             String PayWeekEnding = bundle.getString("PayWeekEnding");
             boolean chequePrinted = bundle.getBoolean("chequePrinted");
             chequeId = bundle.getLong("chequeId");
-
 
             Log.e("check url", chequeUrl + " kk");
             //chequeUrl = "http://www.africau.edu/images/default/sample.pdf";
@@ -77,13 +77,24 @@ public class ViewActivity extends AppCompatActivity {
                     showPdfFile(chequeUrl);
                 }
                 binding.print.setOnClickListener(view -> {
+                    isfinish = false;
                     printRequest();
                 });
+
+                binding.empName.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(isfinish) {
+                            onBackPressed();
+                        }
+                    }
+                }, 20000);
+
             } else {
                 binding.empName.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        printRequest();
+                        onBackPressed();
                     }
                 }, 2500);
             }

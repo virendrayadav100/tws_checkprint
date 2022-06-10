@@ -23,6 +23,15 @@ public class OtpVerificationActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_otp_verification);
         Bundle bundle = getIntent().getExtras();
 
+        binding.otpText.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //  if(isfinish) {
+                onBackPressed();
+                // }
+            }
+        }, 20000);
+
         if (bundle != null) {
             String MobileNo = bundle.getString("MobileNo");
             otp = bundle.getString("OTPText");
