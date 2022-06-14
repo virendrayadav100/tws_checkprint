@@ -44,34 +44,34 @@ public class OtpVerificationActivity extends AppCompatActivity {
         binding.verify.setOnClickListener(view -> {
             String enteredOtp = Objects.requireNonNull(binding.textOTP.getText()).toString().trim();
             String enteredSSN = Objects.requireNonNull(binding.textSSN.getText()).toString().trim();
-            if(enteredOtp.isEmpty()) {
+            if (enteredOtp.isEmpty()) {
                 showMessage("Provide OTP");
                 return;
             }
 
-            if(enteredSSN.isEmpty()) {
+            if (enteredSSN.isEmpty()) {
                 showMessage("Provide SSN last five digit");
                 return;
             }
-            if(!enteredOtp.equals(otp)) {
+            if (!enteredOtp.equals(otp)) {
                 showMessage("Otp not match");
                 return;
             }
 
-            if(!enteredSSN.equals(ssn)) {
+            if (!enteredSSN.equals(ssn)) {
                 showMessage("SSN last five digit not match");
                 return;
             }
 
             showMessage("Printing success");
-            startActivity(new Intent(getApplicationContext(),CameraActivity.class));
+            startActivity(new Intent(getApplicationContext(), CameraActivity.class));
             finish();
         });
     }
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(getApplicationContext(),CameraActivity.class));
+        startActivity(new Intent(getApplicationContext(), CameraActivity.class));
         finish();
     }
 

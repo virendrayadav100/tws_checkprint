@@ -1,5 +1,6 @@
 package com.cms.checkprint;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -19,12 +20,14 @@ import com.cms.checkprint.network.retrofit.apis.data.DataApiCallback;
 import com.cms.checkprint.network.retrofit.apis.data.DataApiService;
 import com.google.gson.JsonObject;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 public class ViewActivity extends AppCompatActivity {
     ActivityViewBinding binding;
     private long associateId, chequeId;
     private String removePdfTopIcon = "javascript:(function() {" + "document.querySelector('[role=\"toolbar\"]').remove();})()";
     private String chequeUrl;
-    private boolean isfinish= true;
+    private boolean isFinish= true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,14 +80,13 @@ public class ViewActivity extends AppCompatActivity {
                     showPdfFile(chequeUrl);
                 }
                 binding.print.setOnClickListener(view -> {
-                    isfinish = false;
-                    printRequest();
+                    showConfirmDialog();
                 });
 
                 binding.empName.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(isfinish) {
+                        if(isFinish) {
                             onBackPressed();
                         }
                     }
@@ -105,6 +107,26 @@ public class ViewActivity extends AppCompatActivity {
     public void onBackPressed() {
         startActivity(new Intent(getApplicationContext(), CameraActivity.class));
         finish();
+    }
+
+    public void showConfirmDialog(){
+        new SweetAlertDialog(this, SweetAlertDialog.NORMAL_TYPE)
+                .setTitleText("Confirmation")
+                .setContentText("Are you sure want to print?")
+                .setConfirmButton("OK", new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        isFinish = false;
+                        printRequest();
+                    }
+                })
+                .setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     private void printRequest() {
@@ -168,9 +190,10 @@ public class ViewActivity extends AppCompatActivity {
 
     private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        onBackPressed();
     }
 
-
+    @SuppressLint("SetJavaScriptEnabled")
     private void showPdfFile(final String imageString) {
         showProgress();
         binding.pdfView.invalidate();
