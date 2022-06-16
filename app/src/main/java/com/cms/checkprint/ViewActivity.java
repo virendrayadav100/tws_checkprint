@@ -75,7 +75,7 @@ public class ViewActivity extends AppCompatActivity {
                     binding.pdfView.setVisibility(View.VISIBLE);
                     binding.pdfHeading.setVisibility(View.VISIBLE);
                     //binding.pdfView.getSettings().setJavaScriptEnabled(true);
-                   // binding.pdfView.loadUrl("https://drive.google.com/viewerng/viewer?embedded=true&url=" + chequeUrl);
+                    //binding.pdfView.loadUrl("https://drive.google.com/viewerng/viewer?embedded=true&url=" + chequeUrl);
                     //binding.pdfView.loadUrl("http://docs.google.com/gview?embedded=true&url=" + chequeUrl);
                     showPdfFile(chequeUrl);
                 }
@@ -92,7 +92,7 @@ public class ViewActivity extends AppCompatActivity {
                     }
                 }, 20000);
 
-            } else {
+           } else {
                 binding.empName.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -116,6 +116,7 @@ public class ViewActivity extends AppCompatActivity {
                 .setConfirmButton("OK", new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
                         isFinish = false;
                         printRequest();
                     }
