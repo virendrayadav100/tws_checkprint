@@ -1,7 +1,10 @@
 package com.cms.checkprint.network.retrofit.core;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
+import com.cms.checkprint.helper.MyApplication;
+import com.cms.checkprint.helper.MySharedPreference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -15,9 +18,17 @@ public class RetrofitClient {
 
     private static Retrofit retrofit;
     private static Context context;
-    public static String baseUrl = "https://wtspinappapicommon.azurewebsites.net/api/";
+    private static String baseUrl ="";
+    //public static String baseUrl = "https://wtspinappapicommon.azurewebsites.net/api/";
 
     public static <S> S getRetrofitClient(Class<S> serviceClass) {
+
+        context = MyApplication.getAppContext();
+        MySharedPreference mySharedPreference = new MySharedPreference(context);
+       SharedPreferences  sharedPreferences = mySharedPreference.getSharedPreference();
+        baseUrl = sharedPreferences.getString("appUrl","");
+        //Configuration configuration = (Configuration) mySharedPreference.getSharedPreference(MySharedPreference.KEY_CONFIGURATION);
+
         Gson gson = new GsonBuilder()
                 //.registerTypeAdapter(Date.class,new UtcDateTypeAdapter())
                 //.registerTypeAdapter(Date.class,new GsonDateSerializer())
@@ -33,7 +44,7 @@ public class RetrofitClient {
                         .build();
 
                 retrofit = new Retrofit.Builder()
-                        .baseUrl(baseUrl)
+                        .baseUrl(baseUrl+"/")
                         .client(okHttpClient)
                         .addConverterFactory(GsonConverterFactory.create(gson))
                         //.addCallAdapterFactory(RxJava2CallAdapterFactory.create())

@@ -23,8 +23,8 @@ class CircleCameraMaskPreview : View {
     private var mPaintMask: Paint = Paint()
     private var mPaintCircle: Paint = Paint()
     private var mPorterDuffMode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-    private var mStartColor: Int = android.R.color.holo_red_light
-    private var mEndColor: Int = android.R.color.holo_blue_dark
+    private var mStartColor: Int = android.R.color.holo_green_dark
+    private var mEndColor: Int = android.R.color.holo_green_dark
 
     init {
         initView()
@@ -33,7 +33,7 @@ class CircleCameraMaskPreview : View {
     private fun initView() {
         mPaintMask.alpha = 0
         mPaintMask.isAntiAlias = true
-        mPaintMask.color = Color.BLACK
+        mPaintMask.color = Color.parseColor("#1C0050")
         mPaintMask.style = Paint.Style.FILL
 
         mPaintCircle.color = ContextCompat.getColor(context, android.R.color.holo_blue_light)
