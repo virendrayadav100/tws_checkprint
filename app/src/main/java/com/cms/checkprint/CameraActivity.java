@@ -133,7 +133,6 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
         }*/
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -230,11 +229,11 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
                                     finish();
                                 }else{
                                     isProcessing = false;
-                                    showMessage(message);
+                                    //showMessage(message);
                                 }
                             } else {
                                 isProcessing = false;
-                                showMessage(message);
+                                //showMessage(message);
                             }
 
                         } else {

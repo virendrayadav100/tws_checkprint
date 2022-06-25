@@ -56,6 +56,10 @@ public class ViewActivity extends AppCompatActivity {
             binding.payWeekEnding.setText("Pay Week Ending :" + (PayWeekEnding.isEmpty() ? " NA" : " " + PayWeekEnding));
             binding.message.setText(Html.fromHtml(message));
 
+            binding.back.setOnClickListener(view -> {
+                onBackPressed();
+            });
+
             Log.e("pic", pic + " kkkk");
             if (pic == null || pic.isEmpty()) {
                 Glide
@@ -70,6 +74,7 @@ public class ViewActivity extends AppCompatActivity {
             }
 
             if (status && !chequePrinted) {
+                binding.message.setVisibility(View.GONE);
                 binding.print.setVisibility(View.VISIBLE);
                 if (chequeUrl != null && !chequeUrl.isEmpty()) {
                     binding.pdfView.setVisibility(View.VISIBLE);
@@ -90,7 +95,7 @@ public class ViewActivity extends AppCompatActivity {
                             onBackPressed();
                         }
                     }
-                }, 20000);
+                }, 60000);
 
            } else {
                 binding.empName.postDelayed(new Runnable() {
@@ -98,7 +103,7 @@ public class ViewActivity extends AppCompatActivity {
                     public void run() {
                         onBackPressed();
                     }
-                }, 2500);
+                }, 5000);
             }
         } else finish();
     }
