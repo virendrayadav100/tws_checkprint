@@ -20,7 +20,7 @@ public class ConfigurationActivity extends ParentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_configuration);
-        binding.clientApiInput.setText("https://wtspinappapicommon.azurewebsites.net/api");
+        binding.clientApiInput.setText("https://checkprintapicommon.azurewebsites.net/api");
 
         Log.e("appurl",preferences.getString("appUrl",null)+" l");
         if (preferences.getString("appUrl",null) != null) {
