@@ -19,4 +19,6 @@ public interface DataApis {
     @POST("checkprint/PrintRequest")
     Call<JsonObject> printRequest(@Body JsonObject requestBodyData);
 
+    @POST("checkprint/ValidatePrintRequest")
+    Call<JsonObject> validatePrintRequest(@Body JsonObject requestBodyData);
 }

@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.cms.checkprint">
+    package="com.cms.checkprint" >
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".helper.MyApplication"
@@ -15,14 +18,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CheckPrint"
         tools:ignore="GoogleAppIndexingWarning"
-        tools:replace="android:icon">
+        tools:replace="android:icon" >
+        <activity
+            android:name=".SuccessActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
         <activity
             android:name=".ParentActivity"
             android:exported="false" />
         <activity
             android:name=".ConfigurationActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,7 +53,7 @@
         <activity
             android:name=".CameraActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
 
             <!--
             <intent-filter>

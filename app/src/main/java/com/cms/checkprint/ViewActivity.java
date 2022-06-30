@@ -171,6 +171,8 @@ public class ViewActivity extends AppCompatActivity {
                             bundle.putString("message", message);
                             bundle.putString("pdf", chequeUrl);
                             bundle.putBoolean("status", true);
+                            bundle.putLong("associateId", associateId);
+                            bundle.putLong("chequeId", chequeId);
                             Intent intent = new Intent(getApplicationContext(), OtpVerificationActivity.class);
                             intent.putExtras(bundle);
                             startActivity(intent);

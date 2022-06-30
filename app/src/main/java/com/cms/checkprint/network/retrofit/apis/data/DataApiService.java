@@ -68,6 +68,28 @@ public class DataApiService {
     }
 
 
+    public static void validatePrintRequest(long associateId,long chequeId,String otp,String ssn, final DataApiCallback dataApiCallback) {
+        DataApis dataApis = RetrofitClient.getRetrofitClient(DataApis.class);
+        JsonObject dataRequest = new JsonObject();
+        dataRequest.addProperty("AssociateId",associateId);
+        dataRequest.addProperty("CheckId",chequeId);
+        dataRequest.addProperty("OTP",otp);
+        dataRequest.addProperty("SSN",ssn);
+
+        Call<JsonObject> call = dataApis.validatePrintRequest(dataRequest);
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                dataApiCallback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                dataApiCallback.onFailure(t);
+            }
+        });
+    }
+
 
 
 }

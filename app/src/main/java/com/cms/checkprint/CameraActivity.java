@@ -3,13 +3,17 @@ package com.cms.checkprint;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 import com.cms.checkprint.camera.CameraSource;
@@ -38,6 +42,8 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
     private FaceContourDetectorProcessor mFaceContourDetectorProcessor;
     private boolean isProcessing = false;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +53,7 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
             createCameraSource();
         }
         startCameraSource();
+
     }
 
     @Override
