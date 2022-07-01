@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,8 @@ import com.cms.checkprint.network.retrofit.apis.data.DataApiCallback;
 import com.cms.checkprint.network.retrofit.apis.data.DataApiService;
 import com.google.gson.JsonObject;
 
+import java.io.File;
+
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class ViewActivity extends AppCompatActivity {
@@ -32,6 +35,13 @@ public class ViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view);
+
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "temp.pdf");
+        Log.e("path", file.getPath() + " k");
+        if (file.exists()) {//File Exists
+            boolean deleted = file.delete();
+            Log.e("deleted",deleted+" kkk");
+        }
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {

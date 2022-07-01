@@ -2,6 +2,7 @@ package com.cms.checkprint;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import com.cms.checkprint.network.retrofit.apis.data.DataApiCallback;
 import com.cms.checkprint.network.retrofit.apis.data.DataApiService;
 import com.google.gson.JsonObject;
 
+import java.io.File;
 import java.util.Objects;
 
 public class OtpVerificationActivity extends AppCompatActivity {
@@ -29,7 +31,12 @@ public class OtpVerificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_otp_verification);
+
         Bundle bundle = getIntent().getExtras();
+
+        binding.back.setOnClickListener(view -> {
+            onBackPressed();
+        });
 
         binding.otpText.postDelayed(new Runnable() {
             @Override
@@ -38,7 +45,7 @@ public class OtpVerificationActivity extends AppCompatActivity {
                     onBackPressed();
                 }
             }
-        }, 60000);
+        }, 120000);
 
         if (bundle != null) {
             String MobileNo = bundle.getString("MobileNo");
@@ -63,7 +70,7 @@ public class OtpVerificationActivity extends AppCompatActivity {
             }
 
             if (enteredSSN.isEmpty()) {
-                showMessage("Provide SSN last five digit");
+                showMessage("Provide first 3 digits of SSN");
                 return;
             }
 

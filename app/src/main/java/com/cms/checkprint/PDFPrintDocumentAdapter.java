@@ -1,6 +1,8 @@
 package com.cms.checkprint;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
@@ -87,6 +89,8 @@ public class PDFPrintDocumentAdapter extends PrintDocumentAdapter {
     @Override
     public void onFinish() {
         super.onFinish();
-        Toast.makeText(context, "Printing is completed", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "Printing is completed", Toast.LENGTH_SHORT).show();
+        context.startActivity(new Intent(context, CameraActivity.class));
+        ((Activity)context).finishAffinity();
     }
 }
