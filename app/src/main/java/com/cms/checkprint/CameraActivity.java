@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -48,7 +49,7 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_camera);
-
+        deleteOldPdf();
         if (new MyPermissionUtil().isHavePermission(this, PERMISSION_CAMERA_REQUEST_CODE, Manifest.permission.CAMERA)) {
             createCameraSource();
         }
@@ -270,6 +271,15 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
 
     private void refreshActivity() {
         startActivity(new Intent(this, CameraActivity.class));
+    }
 
+    private void deleteOldPdf(){
+        File fileOrFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (fileOrFolder.isDirectory()) {
+                for (File child : fileOrFolder.listFiles()) {
+                    if(child.isFile() && child.getName().contains("check_print"))
+                        child.delete();
+                }
+            }
     }
 }

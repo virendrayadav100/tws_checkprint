@@ -31,7 +31,6 @@ public class OtpVerificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_otp_verification);
-
         Bundle bundle = getIntent().getExtras();
 
         binding.back.setOnClickListener(view -> {

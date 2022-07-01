@@ -36,13 +36,6 @@ public class ViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view);
 
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "temp.pdf");
-        Log.e("path", file.getPath() + " k");
-        if (file.exists()) {//File Exists
-            boolean deleted = file.delete();
-            Log.e("deleted",deleted+" kkk");
-        }
-
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
 

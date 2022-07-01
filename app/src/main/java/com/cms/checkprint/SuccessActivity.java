@@ -24,6 +24,7 @@ import androidx.databinding.DataBindingUtil;
 import com.cms.checkprint.databinding.ActivitySuccessBinding;
 
 import java.io.File;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,6 +32,7 @@ public class SuccessActivity extends AppCompatActivity {
 
     private PrintManager printManager;
     private String pdfUrl;
+    private  long timeStamp=0;
 
     ActivityResultLauncher<String[]> requestPermissionForStorageLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissions -> {
@@ -46,6 +48,8 @@ public class SuccessActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivitySuccessBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_success);
+
+        timeStamp = new Date().getTime();
 
         printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
         Bundle bundle = getIntent().getExtras();
@@ -67,12 +71,12 @@ public class SuccessActivity extends AppCompatActivity {
 
     private void downloadPdf() {
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(pdfUrl));
-        request.setTitle("temp");
+        request.setTitle("Check Print");
         request.setMimeType("applcation/pdf");
         request.allowScanningByMediaScanner();
         request.setAllowedOverMetered(true);
         //request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "temp.pdf");
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "check_print_"+timeStamp+".pdf");
         //request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,  subPath);
         DownloadManager dm = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         dm.enqueue(request);
@@ -96,14 +100,14 @@ public class SuccessActivity extends AppCompatActivity {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "temp.pdf");
+                                        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "check_print_"+timeStamp+".pdf");
                                         Log.e("path", file.getPath() + " k");
 
                                         if (file.exists()) {//File Exists
                                             Log.e("file", "exist");
                                         }
 
-                                        Toast.makeText(SuccessActivity.this, "Downloaded successfully.", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(SuccessActivity.this, "Downloaded successfully.", Toast.LENGTH_SHORT).show();
 
                                         String jobName = getString(R.string.app_name) + " Document";
                                         PrintJob printJob = printManager.print(jobName, new PDFPrintDocumentAdapter(SuccessActivity.this, "Test", file.getPath()), null);
