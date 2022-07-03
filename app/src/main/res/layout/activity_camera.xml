@@ -64,16 +64,17 @@
 
             <ImageView
                 android:id="@+id/tapToStart"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:src="@drawable/camera_frunt"
-                android:padding="10dp"
-                android:layout_marginBottom="@dimen/_85sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/line"
                 app:layout_constraintEnd_toEndOf="@+id/guideline_right"
                 app:layout_constraintStart_toStartOf="@+id/guideline_left"
                 app:layout_constraintTop_toTopOf="@+id/guideline_top"/>
 
             <View
+                android:id="@+id/line"
                 android:layout_width="match_parent"
                 android:layout_height="4dp"
                 android:background="@color/white"
