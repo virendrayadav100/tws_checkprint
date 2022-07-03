@@ -59,8 +59,19 @@
                     android:id="@+id/camera_mask"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
             </com.cms.checkprint.camera.CameraSourcePreview>
 
+            <ImageView
+                android:id="@+id/tapToStart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/camera_frunt"
+                android:padding="10dp"
+                android:layout_marginBottom="@dimen/_85sdp"
+                app:layout_constraintEnd_toEndOf="@+id/guideline_right"
+                app:layout_constraintStart_toStartOf="@+id/guideline_left"
+                app:layout_constraintTop_toTopOf="@+id/guideline_top"/>
 
             <View
                 android:layout_width="match_parent"
@@ -69,6 +80,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/image"/>
 
             <ImageView
+
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="240dp"

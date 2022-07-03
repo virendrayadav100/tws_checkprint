@@ -3,18 +3,15 @@ package com.cms.checkprint;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 import com.cms.checkprint.camera.CameraSource;
@@ -43,18 +40,19 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
     private FaceContourDetectorProcessor mFaceContourDetectorProcessor;
     private boolean isProcessing = false;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_camera);
-        deleteOldPdf();
-        if (new MyPermissionUtil().isHavePermission(this, PERMISSION_CAMERA_REQUEST_CODE, Manifest.permission.CAMERA)) {
-            createCameraSource();
-        }
-        startCameraSource();
 
+        deleteOldPdf();
+        binding.tapToStart.setOnClickListener(view -> {
+            binding.tapToStart.setVisibility(View.GONE);
+            if (new MyPermissionUtil().isHavePermission(this, PERMISSION_CAMERA_REQUEST_CODE, Manifest.permission.CAMERA)) {
+                createCameraSource();
+            }
+            startCameraSource();
+        });
     }
 
     @Override
@@ -196,20 +194,20 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
                                     long empId = 0;
                                     String empCode = "";
                                     String empName = "";
-                                    String clientName ="";
+                                    String clientName = "";
                                     String chequeUrl = "";
                                     String PayWeekEnding = "";
-                                    boolean chequePrinted=false;
-                                    long chequeId =0;
+                                    boolean chequePrinted = false;
+                                    long chequeId = 0;
                                     empId = jsonDataObject.get("AssociateId").getAsLong();
                                     empCode = jsonDataObject.get("AssociateCode").getAsString();
                                     empName = jsonDataObject.get("AssociateName").getAsString();
-                                    clientName =jsonDataObject.get("ClientName").getAsString();
+                                    clientName = jsonDataObject.get("ClientName").getAsString();
                                     if (!jsonDataObject.get("CheckURL").isJsonNull())
-                                        chequeUrl =jsonDataObject.get("CheckURL").getAsString();
+                                        chequeUrl = jsonDataObject.get("CheckURL").getAsString();
                                     if (!jsonDataObject.get("PayWeekEnding").isJsonNull())
-                                    PayWeekEnding =jsonDataObject.get("PayWeekEnding").getAsString();
-                                    chequePrinted =jsonDataObject.get("CheckPrinted").getAsBoolean();
+                                        PayWeekEnding = jsonDataObject.get("PayWeekEnding").getAsString();
+                                    chequePrinted = jsonDataObject.get("CheckPrinted").getAsBoolean();
                                     chequeId = jsonDataObject.get("CheckId").getAsLong();
 
                                     if (!jsonDataObject.get("AssociateImage").isJsonNull()) {
@@ -235,7 +233,7 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
                                     intent.putExtras(bundle);
                                     startActivity(intent);
                                     finish();
-                                }else{
+                                } else {
                                     isProcessing = false;
                                     //showMessage(message);
                                 }
@@ -273,13 +271,13 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
         startActivity(new Intent(this, CameraActivity.class));
     }
 
-    private void deleteOldPdf(){
+    private void deleteOldPdf() {
         File fileOrFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            if (fileOrFolder.isDirectory()) {
-                for (File child : fileOrFolder.listFiles()) {
-                    if(child.isFile() && child.getName().contains("check_print"))
-                        child.delete();
-                }
+        if (fileOrFolder.isDirectory()) {
+            for (File child : fileOrFolder.listFiles()) {
+                if (child.isFile() && child.getName().contains("check_print"))
+                    child.delete();
             }
+        }
     }
 }
