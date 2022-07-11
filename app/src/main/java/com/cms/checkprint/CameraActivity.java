@@ -27,6 +27,8 @@ import com.google.gson.JsonObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CameraActivity extends AppCompatActivity implements FaceContourDetectorProcessor.FaceContourDetectorListener {
 
@@ -39,6 +41,8 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
     private Bitmap mCapturedBitmap = null;
     private FaceContourDetectorProcessor mFaceContourDetectorProcessor;
     private boolean isProcessing = false;
+
+    int imageType=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,30 @@ public class CameraActivity extends AppCompatActivity implements FaceContourDete
             }
             startCameraSource();
         });
+        setupImages();
+    }
+
+    private void setupImages(){
+        final Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(imageType==0) {
+                            imageType =1;
+                            binding.tapToStart.setImageResource(R.drawable.camera_frunt_rus);
+                            binding.image.setImageResource(R.drawable.banner_rus);
+                        }else{
+                            imageType =0;
+                            binding.image.setImageResource(R.drawable.banner);
+                            binding.tapToStart.setImageResource(R.drawable.camera_frunt);
+                        }
+                    }
+                });
+            }
+        },0,4000);
     }
 
     @Override

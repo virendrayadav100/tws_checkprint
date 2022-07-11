@@ -10,6 +10,7 @@ import android.print.PageRange;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintDocumentInfo;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.FileInputStream;
@@ -69,8 +70,10 @@ public class PDFPrintDocumentAdapter extends PrintDocumentAdapter {
             writeResultCallback.onWriteFinished(new PageRange[]{PageRange.ALL_PAGES});
 
         } catch (FileNotFoundException ee) {
+            Log.e("error1",ee.getMessage()+" kkk");
             //Catch exception
         } catch (Exception e) {
+            Log.e("error2",e.getMessage()+" kkk");
             //Catch exception
         } finally {
             try {
@@ -82,6 +85,7 @@ public class PDFPrintDocumentAdapter extends PrintDocumentAdapter {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.e("error3",e.getMessage()+" kkk");
             }
         }
     }

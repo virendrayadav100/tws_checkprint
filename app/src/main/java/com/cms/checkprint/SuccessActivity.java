@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.print.PageRange;
+import android.print.PrintAttributes;
 import android.print.PrintJob;
 import android.print.PrintManager;
 import android.util.Log;
@@ -58,7 +60,7 @@ public class SuccessActivity extends AppCompatActivity {
             Log.e("pdfUrl", pdfUrl + " k");
 
             if (ContextCompat.checkSelfPermission(SuccessActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                requestPermissionForStorageLauncher.launch(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE});
+                requestPermissionForStorageLauncher.launch(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE});
             else {
                 downloadPdf();
             }
@@ -96,23 +98,26 @@ public class SuccessActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                Toast.makeText(SuccessActivity.this, "Downloaded successfully.", Toast.LENGTH_SHORT).show();
+                                new Handler().postDelayed(() -> {
+                                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "check_print_"+timeStamp+".pdf");
+                                    Log.e("path", file.getPath() + " k");
 
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "check_print_"+timeStamp+".pdf");
-                                        Log.e("path", file.getPath() + " k");
-
-                                        if (file.exists()) {//File Exists
-                                            Log.e("file", "exist");
-                                        }
-
-                                        //Toast.makeText(SuccessActivity.this, "Downloaded successfully.", Toast.LENGTH_SHORT).show();
-
-                                        String jobName = getString(R.string.app_name) + " Document";
-                                        PrintJob printJob = printManager.print(jobName, new PDFPrintDocumentAdapter(SuccessActivity.this, "Test", file.getPath()), null);
+                                    if (file.exists()) {//File Exists
+                                        Log.e("file", "exist");
                                     }
-                                },700);
+
+                                    PrintAttributes attributes = new PrintAttributes.Builder()
+                                            .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                                            .setResolution(new PrintAttributes.Resolution("id", PRINT_SERVICE, 300, 300))
+                                            .setColorMode(PrintAttributes.COLOR_MODE_COLOR)
+                                            .setMinMargins(new PrintAttributes.Margins(0, 0, 0, 0))
+                                            .build();
+                                    PageRange[] ranges = new PageRange[]{new PageRange(1, 1)};
+
+                                    String jobName = getString(R.string.app_name) + " Document";
+                                    PrintJob printJob = printManager.print(jobName, new PDFPrintDocumentAdapter(SuccessActivity.this, "check_print_"+timeStamp, file.getPath()), attributes);
+                                },900);
 
                             }
                         });
