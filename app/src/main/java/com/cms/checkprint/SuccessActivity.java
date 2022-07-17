@@ -117,6 +117,7 @@ public class SuccessActivity extends AppCompatActivity {
 
                                     String jobName = getString(R.string.app_name) + " Document";
                                     PrintJob printJob = printManager.print(jobName, new PDFPrintDocumentAdapter(SuccessActivity.this, "check_print_"+timeStamp, file.getPath()), attributes);
+                                    Toast.makeText(SuccessActivity.this, "Unable to print", Toast.LENGTH_SHORT).show();
                                 },900);
 
                             }
