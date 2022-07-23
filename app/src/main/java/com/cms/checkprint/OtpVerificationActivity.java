@@ -56,8 +56,6 @@ public class OtpVerificationActivity extends AppCompatActivity {
 
             associateId = bundle.getLong("associateId");
             chequeId = bundle.getLong("chequeId");
-            Log.e("associateId", associateId + " k");
-            Log.e("checkid", chequeId + " k");
         }
 
         binding.verify.setOnClickListener(view -> {

@@ -22,7 +22,6 @@ public class ConfigurationActivity extends ParentActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_configuration);
         binding.clientApiInput.setText("https://checkprintapicommon.azurewebsites.net/api");
 
-        Log.e("appurl",preferences.getString("appUrl",null)+" l");
         if (preferences.getString("appUrl",null) != null) {
             startActivity(new Intent(ConfigurationActivity.this, CameraActivity.class));
             finish();

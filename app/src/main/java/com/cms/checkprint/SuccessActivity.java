@@ -155,8 +155,6 @@ public class SuccessActivity extends AppCompatActivity {
     public boolean deleteFile() {
         String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/temp.pdf";
         File file = new File(path);
-        Log.e("delete", "deleted");
-        Log.e("delete", file.getPath() + " kk");
         return file.delete();
     }
 
