@@ -52,7 +52,6 @@ public class SuccessActivity extends AppCompatActivity {
         ActivitySuccessBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_success);
 
         timeStamp = new Date().getTime();
-
         printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -115,7 +114,18 @@ public class SuccessActivity extends AppCompatActivity {
                                             .build();
                                     PageRange[] ranges = new PageRange[]{new PageRange(1, 1)};
 
-                                    String jobName = getString(R.string.app_name) + " Document";
+                                    String jobName = "";
+                                    try{
+                                        jobName = pdfUrl.substring(pdfUrl.lastIndexOf('/') + 1);
+                                        jobName = jobName.substring(0,jobName.lastIndexOf("."));
+                                        Log.e("name",jobName);
+                                    }catch (Exception e){
+
+                                    }
+                                    if(jobName==null || jobName.isEmpty())
+                                    jobName = "Chick Print Document";
+
+                                    //String jobName = getString(R.string.app_name) + " Document";
                                     PrintJob printJob = printManager.print(jobName, new PDFPrintDocumentAdapter(SuccessActivity.this, "check_print_"+timeStamp, file.getPath()), attributes);
                                     Toast.makeText(SuccessActivity.this, "Unable to print", Toast.LENGTH_SHORT).show();
                                 },900);
