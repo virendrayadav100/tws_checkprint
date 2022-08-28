@@ -62,21 +62,21 @@ public class OtpVerificationActivity extends AppCompatActivity {
         binding.verify.setOnClickListener(view -> {
             String enteredOtp = Objects.requireNonNull(binding.textOTP.getText()).toString().trim();
             String enteredSSN = Objects.requireNonNull(binding.textSSN.getText()).toString().trim();
-           /* if (enteredOtp.isEmpty()) {
+            if (enteredOtp.isEmpty()) {
                 showMessage("Provide Security Key");
                 return;
-            }*/
+            }
 
-            if (enteredSSN.isEmpty()) {
+            /*if (enteredSSN.isEmpty()) {
                 showMessage("Provide first 3 digits of SSN");
                 return;
-            }
+            }*/
 
             if (!NetworkConfiguration.isNetworkAvailable(OtpVerificationActivity.this)) {
                 showMessage("No internet connection available.");
                 return;
             }
-            validatePrintRequest("123", enteredSSN);
+            validatePrintRequest(enteredOtp, "123");
         });
     }
 
@@ -107,7 +107,7 @@ public class OtpVerificationActivity extends AppCompatActivity {
                             isfinish = false;
                             Bundle bundle = new Bundle();
                             bundle.putString("pdf", pdfUrl);
-                            Intent intent = new Intent(getApplicationContext(), SuccessActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), PrintingProcessActivity.class);
                             intent.putExtras(bundle);
                             startActivity(intent);
                             finish();

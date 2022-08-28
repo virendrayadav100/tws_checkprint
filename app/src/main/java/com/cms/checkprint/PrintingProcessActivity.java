@@ -21,10 +21,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
-import android.print.PageRange;
-import android.print.PrintAttributes;
-import android.print.PrintJob;
-import android.print.PrintManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -34,7 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
-import com.cms.checkprint.databinding.ActivitySuccessBinding;
+import com.cms.checkprint.databinding.ActivityPrintingProcessBinding;
 import com.dynamixsoftware.intentapi.IJob;
 import com.dynamixsoftware.intentapi.IPrintCallback;
 import com.dynamixsoftware.intentapi.IPrinterInfo;
@@ -49,52 +45,53 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SuccessActivity extends AppCompatActivity {
+public class PrintingProcessActivity extends AppCompatActivity {
 
-    private PrintManager printManager;
+    ActivityPrintingProcessBinding binding;
+    //private PrintManager printManager;
     private String pdfUrl;
-    private  long timeStamp=0;
+    private long timeStamp = 0;
     private IntentAPI intentApi;
     private Handler mainHandler = new Handler(Looper.getMainLooper());
-
     ActivityResultLauncher<String[]> requestPermissionForStorageLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), permissions -> {
                 if (permissions != null) {
                     if (permissions.get(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         downloadPdf();
                     } else
-                        Toast.makeText(SuccessActivity.this, "Storage permission required", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PrintingProcessActivity.this, "Storage permission required", Toast.LENGTH_SHORT).show();
                 }
             });
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivitySuccessBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_success);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_printing_process);
 
         timeStamp = new Date().getTime();
-        printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
+        // printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
         Bundle bundle = getIntent().getExtras();
 
         intentApi = new IntentAPI(this); // some features not worked if initialized without activity
         Context appContext = getApplicationContext();
 
         try {
-            Log.e("run service","reached here k");
+            Log.e("run service", "reached here k");
             intentApi.runService(new IServiceCallback.Stub() {
                 @Override
                 public void onServiceDisconnected() {
-                    toastInMainThread(appContext, "Service disconnected");
+                    toastInMainThread(appContext, "Print service disconnected");
                 }
 
                 @Override
                 public void onServiceConnected() {
-                    toastInMainThread(appContext, "Service connected");
+                    toastInMainThread(appContext, "Print service connected");
                     try {
                         intentApi.setPrintCallback(new IPrintCallback.Stub() {
                             @Override
                             public void startingPrintJob() {
-                                toastInMainThread(appContext, "startingPrintJob");
+                                toastInMainThread(appContext, "Start printing...");
                             }
 
                             @Override
@@ -104,24 +101,32 @@ public class SuccessActivity extends AppCompatActivity {
 
                             @Override
                             public void sendingPage(int pageNum, int progress) {
-                                toastInMainThread(appContext, "sendingPage number " + pageNum + ", progress " + progress);
+                                toastInMainThread(appContext, "Sending page number " + pageNum + ", progress " + progress);
                             }
 
                             @Override
                             public void preparePage(int pageNum) {
-                                toastInMainThread(appContext, "preparePage number " + pageNum);
+                                toastInMainThread(appContext, "Prepare page number " + pageNum);
                             }
 
                             @Override
                             public boolean needCancel() {
-                                toastInMainThread(appContext, "needCancel");
+                                toastInMainThread(appContext, "Need Cancel");
                                 // If you need to cancel printing send true
                                 return false;
                             }
 
                             @Override
                             public void finishingPrintJob() {
-                                toastInMainThread(appContext, "finishingPrintJob");
+                                toastInMainThread(appContext, "Finishing Print Job");
+                                mainHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.e("print", "finish");
+                                        startActivity(new Intent(PrintingProcessActivity.this, SuccessNewActivity.class));
+                                        PrintingProcessActivity.this.finish();
+                                    }
+                                });
                             }
 
                             @Override
@@ -131,6 +136,8 @@ public class SuccessActivity extends AppCompatActivity {
                         });
                     } catch (RemoteException e) {
                         e.printStackTrace();
+                        toastInMainThread(appContext, e.getMessage());
+                        onBackPressed();
                     }
                 }
 
@@ -159,28 +166,34 @@ public class SuccessActivity extends AppCompatActivity {
                 @Override
                 public void onError(Result result) {
                     toastInMainThread(appContext, "error, Result " + result + "; Result type " + result.getType());
+                    onBackPressed();
                 }
             });
+
+            try {
+                IPrinterInfo printer = intentApi.getCurrentPrinter();
+                binding.printerName.setText((printer != null ? printer.getName() : "Printer not available"));
+                if (printer == null)
+                    onBackPressed();
+            } catch (Exception ex) {
+                binding.printerName.setText("Printer not available");
+                onBackPressed();
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
+            toastInMainThread(appContext, e.getMessage());
+            onBackPressed();
         }
 
         if (bundle != null) {
             pdfUrl = bundle.getString("pdf");
             Log.e("pdfUrl", pdfUrl + " k");
-
-            if (ContextCompat.checkSelfPermission(SuccessActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                requestPermissionForStorageLauncher.launch(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE});
+            if (ContextCompat.checkSelfPermission(PrintingProcessActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                requestPermissionForStorageLauncher.launch(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE});
             else {
                 downloadPdf();
             }
         }
-
-        binding.back.setOnClickListener(view -> {
-            onBackPressed();
-        });
-
-
     }
 
     private void downloadPdf() {
@@ -190,7 +203,7 @@ public class SuccessActivity extends AppCompatActivity {
         request.allowScanningByMediaScanner();
         request.setAllowedOverMetered(true);
         //request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "check_print_"+timeStamp+".png");
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "check_print_" + timeStamp + ".png");
         //request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,  subPath);
         DownloadManager dm = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         dm.enqueue(request);
@@ -210,25 +223,25 @@ public class SuccessActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(SuccessActivity.this, "Downloaded successfully.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PrintingProcessActivity.this, "Downloaded successfully.", Toast.LENGTH_SHORT).show();
                                 new Handler().postDelayed(() -> {
-                                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "check_print_"+timeStamp+".png");
+                                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "check_print_" + timeStamp + ".png");
                                     Log.e("path", file.getPath() + " k");
 
                                     if (file.exists()) {//File Exists
                                         Log.e("file", "exist");
                                     }
 
-                                    String jobName = "";
-                                    try{
+                                  /*  String jobName = "";
+                                    try {
                                         jobName = pdfUrl.substring(pdfUrl.lastIndexOf('/') + 1);
-                                        jobName = jobName.substring(0,jobName.lastIndexOf("."));
-                                        Log.e("name",jobName);
-                                    }catch (Exception ignored){
+                                        jobName = jobName.substring(0, jobName.lastIndexOf("."));
+                                        Log.e("name", jobName);
+                                    } catch (Exception ignored) {
                                     }
 
-                                    if(jobName.isEmpty())
-                                        jobName = "Check Print Document";
+                                    if (jobName.isEmpty())
+                                        jobName = "Check Print Document";*/
 
                                     try {
                                         Uri u = Uri.fromFile(file);
@@ -243,8 +256,8 @@ public class SuccessActivity extends AppCompatActivity {
                                                 public Bitmap renderPageFragment(int num, Rect fragment) throws RemoteException {
                                                     IPrinterInfo printer = intentApi.getCurrentPrinter();
                                                     if (printer != null) {
-                                                        Log.e("width",String.valueOf(fragment.width()));
-                                                        Log.e("height",String.valueOf(fragment.height()));
+                                                        Log.e("width", String.valueOf(fragment.width()));
+                                                        Log.e("height", String.valueOf(fragment.height()));
                                                         Bitmap bitmap = Bitmap.createBitmap(fragment.width(), fragment.height(), Bitmap.Config.ARGB_8888);
                                                         for (int i = 0; i < 3; i++)
                                                             try {
@@ -263,29 +276,29 @@ public class SuccessActivity extends AppCompatActivity {
                                                                     imageHeight = imageBMP.getHeight();
                                                                 }
 
-                                                                Log.e("img width",String.valueOf(imageWidth));
-                                                                Log.e("img height",String.valueOf(imageHeight));
+                                                                Log.e("img width", String.valueOf(imageWidth));
+                                                                Log.e("img height", String.valueOf(imageHeight));
 
                                                                 int xDpi = printer.getPrinterContext().getHResolution();
                                                                 int yDpi = printer.getPrinterContext().getVResolution();
 
-                                                                Log.e("xDpi ",String.valueOf(xDpi));
-                                                                Log.e("yDpi ",String.valueOf(yDpi));
+                                                                Log.e("xDpi ", String.valueOf(xDpi));
+                                                                Log.e("yDpi ", String.valueOf(yDpi));
 
                                                                 // in dots
                                                                 int paperWidth = printer.getPrinterContext().getPaperWidth() * xDpi / 72;
                                                                 int paperHeight = printer.getPrinterContext().getPaperHeight() * yDpi / 72;
 
-                                                                Log.e("paperWidth ",String.valueOf(paperWidth));
-                                                                Log.e("paperHeight ",String.valueOf(paperHeight));
+                                                                Log.e("paperWidth ", String.valueOf(paperWidth));
+                                                                Log.e("paperHeight ", String.valueOf(paperHeight));
 
 
                                                                 float aspectH = (float) imageHeight / (float) paperHeight;
                                                                 float aspectW = (float) imageWidth / (float) paperWidth;
                                                                 RectF dst = new RectF(0, 0, fragment.width() * aspectW, fragment.height() * aspectH);
 
-                                                                Log.e("rectwitdth ",String.valueOf(fragment.width() * aspectW));
-                                                                Log.e("rectheight ",String.valueOf(fragment.height() * aspectH));
+                                                                Log.e("rectwitdth ", String.valueOf(fragment.width() * aspectW));
+                                                                Log.e("rectheight ", String.valueOf(fragment.height() * aspectH));
 
 
                                                                 float sLeft = 0;
@@ -325,15 +338,18 @@ public class SuccessActivity extends AppCompatActivity {
                                             intentApi.print(job, 1);
                                         } catch (RemoteException e) {
                                             e.printStackTrace();
+                                            toastInMainThread(PrintingProcessActivity.this, e.getMessage());
+                                            onBackPressed();
                                         }
 
-                                    }
-                                    catch(Exception ex){
+                                    } catch (Exception ex) {
                                         ex.printStackTrace();
+                                        toastInMainThread(PrintingProcessActivity.this, ex.getMessage());
+                                        onBackPressed();
                                     }
                                     //intentApi.print(jobName, "application/pdf", u);
 
-                                },900);
+                                }, 900);
 
                             }
                         });
@@ -345,8 +361,9 @@ public class SuccessActivity extends AppCompatActivity {
                                 Toast.makeText(SuccessActivity.this, "STATUS_FAILED", Toast.LENGTH_SHORT).show();
                             }
                         });*/
-                        Toast.makeText(SuccessActivity.this, "STATUS_FAILED", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PrintingProcessActivity.this, "STATUS_FAILED", Toast.LENGTH_SHORT).show();
                         timer.cancel();
+                        onBackPressed();
                     } else {
                        /* runOnUiThread(new Runnable() {
                             @Override
@@ -392,97 +409,13 @@ public class SuccessActivity extends AppCompatActivity {
             intentApi = null;
         }
 
-        startActivity(new Intent(getApplicationContext(), CameraActivity.class));
-        finish();
-    }
-
-    private void initIntentApi(){
-        intentApi = new IntentAPI(SuccessActivity.this);
-        final Context appContext = getApplicationContext();
-        try {
-            intentApi.runService(new IServiceCallback.Stub() {
-                @Override
-                public void onServiceDisconnected() {
-                    toastInMainThread(appContext, "Service disconnected");
-                }
-
-                @Override
-                public void onServiceConnected() {
-                    toastInMainThread(appContext, "Service connected");
-                    try {
-                        intentApi.setPrintCallback(new IPrintCallback.Stub() {
-                            @Override
-                            public void startingPrintJob() {
-                                toastInMainThread(appContext, "startingPrintJob");
-                            }
-
-                            @Override
-                            public void start() {
-                                toastInMainThread(appContext, "start");
-                            }
-
-                            @Override
-                            public void sendingPage(int pageNum, int progress) {
-                                toastInMainThread(appContext, "sendingPage number " + pageNum + ", progress " + progress);
-                            }
-
-                            @Override
-                            public void preparePage(int pageNum) {
-                                toastInMainThread(appContext, "preparePage number " + pageNum);
-                            }
-
-                            @Override
-                            public boolean needCancel() {
-                                toastInMainThread(appContext, "needCancel");
-                                // If you need to cancel printing send true
-                                return false;
-                            }
-
-                            @Override
-                            public void finishingPrintJob() {
-                                toastInMainThread(appContext, "finishingPrintJob");
-                            }
-
-                            @Override
-                            public void finish(Result result, int pagesPrinted) {
-                                toastInMainThread(appContext, "finish, Result " + result + "; Result type " + result.getType() + "; Result message " + result.getType().getMessage() + "; pages printed " + pagesPrinted);
-                            }
-                        });
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFileOpen(int progress, int finished) {
-                    toastInMainThread(appContext, "onFileOpen progress " + progress + "; finished " + (finished == 1));
-                }
-
-                @Override
-                public void onLibraryDownload(int progress) {
-                    toastInMainThread(appContext, "onLibraryDownload progress " + progress);
-                }
-
-                @Override
-                public boolean onRenderLibraryCheck(boolean renderLibrary, boolean fontLibrary) {
-                    toastInMainThread(appContext, "onRenderLibraryCheck render library " + renderLibrary + "; fonts library " + fontLibrary);
-                    return true;
-                }
-
-                @Override
-                public String onPasswordRequired() {
-                    toastInMainThread(appContext, "onPasswordRequired");
-                    return "password";
-                }
-
-                @Override
-                public void onError(Result result) {
-                    toastInMainThread(appContext, "error, Result " + result + "; Result type " + result.getType());
-                }
-            });
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+        binding.printerName.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(getApplicationContext(), CameraActivity.class));
+                finish();
+            }
+        }, 4000);
     }
 
 
@@ -490,7 +423,8 @@ public class SuccessActivity extends AppCompatActivity {
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show();
+                binding.message.setText(message);
+                Log.e("message", message);
             }
         });
     }

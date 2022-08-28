@@ -80,7 +80,7 @@
                 android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 app:cardCornerRadius="@dimen/_7sdp"
-                app:layout_constraintBottom_toTopOf="@+id/pdfView"
+                app:layout_constraintBottom_toTopOf="@+id/pdfImageView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/heading">
@@ -173,14 +173,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_10sdp"
-                        android:text="Print"
-                        android:textColor="@color/white"
+                        android:text="VERIFY"
+                        android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/_15sdp"
                         android:visibility="gone"
+                        app:backgroundTint="@color/green"
                         app:cornerRadius="5dp"
-                        app:backgroundTint="@color/colorPrimary"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/detailLL" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -198,11 +198,24 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_11ssp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/pdfView"
+                app:layout_constraintBottom_toTopOf="@+id/pdfImageView"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <WebView
                 android:id="@+id/pdfView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_25sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+
+            <ImageView
+                android:id="@+id/pdfImageView"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_200sdp"
                 android:layout_marginStart="@dimen/_10sdp"
@@ -222,10 +235,10 @@
                 android:indeterminateTint="@color/colorPrimary"
                 android:indeterminateTintMode="src_atop"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/pdfView"
-                app:layout_constraintEnd_toEndOf="@+id/pdfView"
-                app:layout_constraintStart_toStartOf="@+id/pdfView"
-                app:layout_constraintTop_toTopOf="@+id/pdfView" />
+                app:layout_constraintBottom_toBottomOf="@+id/pdfImageView"
+                app:layout_constraintEnd_toEndOf="@+id/pdfImageView"
+                app:layout_constraintStart_toStartOf="@+id/pdfImageView"
+                app:layout_constraintTop_toTopOf="@+id/pdfImageView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
