@@ -10,8 +10,8 @@ android {
         applicationId "com.cms.checkprint"
         minSdk 21
         targetSdk 32
-        versionCode 8
-        versionName "1.7"
+        versionCode 10
+        versionName "1.9"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         archivesBaseName = "Cheque-Print-v$versionCode($versionName)"
